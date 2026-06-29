@@ -54,4 +54,4 @@ Use separate upload steps for coverage and test results when both are sent to Co
     verbose: true
 ```
 
-Pin third-party actions according to the repository's workflow policy. In this user's repos, many workflow actions are pinned to full SHAs with comments naming the resolved version.
+Pin third-party actions according to the repository's workflow policy. In this user's repos, workflow actions are commonly pinned to full SHAs with comments naming the resolved version.

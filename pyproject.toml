@@ -308,7 +308,8 @@
         "--cov-branch",
         "--cov-report=term-missing:skip-covered",
         "--cov-report=xml:coverage/python.xml",
-        "--cov-fail-under=75"
+        "--cov-fail-under=75",
+        "--basetemp=.cache/pytest_tmp"
     ]
     filterwarnings             = [ "error" ]
     junit_duration_report      = "call"
@@ -319,7 +320,7 @@
     junit_log_passing_tests    = true
     junit_suite_name           = "python-junit"
     pythonpath                 = [ ".", "scripts" ]
-    cache_dir                  = ".cache/.pytest_cache"
+    cache_dir                  = ".cache/pytest_cache"
     testpaths                  = [ "." ]
     norecursedirs              = [
         ".*",
