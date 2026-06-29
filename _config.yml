@@ -1,0 +1,15 @@
+remote_theme: pages-themes/hacker@v0.2.0
+title: Nick2bad4u - Codecov Skill
+description: Codecov Skill for inspecting coverage, API data, uploads, and repository configuration from the command line.
+url: "https://nick2bad4u.github.io/Codecov-Skill" # the base hostname & protocol for your site
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-feed
+  - jekyll-archives
+  - jekyll-language-plugin
+  - jekyll-algolia
+  - jekyll-mentions
+  - jekyll-admin
+  - jekyll-loading-lazy

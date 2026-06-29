@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title>Codecov Management</title>
+  <rect width="128" height="128" rx="24" fill="#111827"/>
+  <path d="M27 77c4 17 19 30 37 30 14 0 27-8 34-19" fill="none" stroke="#F01F7A" stroke-width="14" stroke-linecap="round"/>
+  <path d="M101 51C95 33 79 21 61 21 45 21 31 30 24 44" fill="none" stroke="#34D399" stroke-width="14" stroke-linecap="round"/>
+  <path d="M43 66h14l8-20 12 39 8-19h10" fill="none" stroke="#F9FAFB" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

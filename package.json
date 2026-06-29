@@ -1,0 +1,81 @@
+{
+  "name": "codecov-management-skill",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Codex skill for managing Codecov coverage, API inspection, uploads, flags, reports, and repository configuration.",
+  "license": "Unlicense",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nick2bad4u/Codecov-Skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nick2bad4u/Codecov-Skill/issues"
+  },
+  "homepage": "https://github.com/Nick2bad4u/Codecov-Skill#readme",
+  "keywords": [
+    "agent-skill",
+    "agent-skills",
+    "ai-agent",
+    "claude-code",
+    "codex",
+    "codecov",
+    "coverage",
+    "cursor",
+    "gemini-cli",
+    "github-copilot",
+    "openai",
+    "opencode",
+    "test-coverage",
+    "universal",
+    "zed"
+  ],
+  "files": [
+    "SKILL.md",
+    "LICENSE.txt",
+    "agents/",
+    "assets/",
+    "references/",
+    "scripts/*.py",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "engines": {
+    "node": ">=22.14"
+  },
+  "scripts": {
+    "test": "npm run test:python",
+    "validate": "node tools/validate-skill-package.mjs",
+    "pack:dry-run": "npm pack --dry-run",
+    "publish:local": "npm run release:verify && npm publish --access public --provenance",
+    "release:verify": "npm run validate && npm run test && npm run pack:dry-run",
+    "update-actions": "npx actions-up --yes --style sha",
+    "ruff:check:unsafe": "ruff check --unsafe-fixes scripts tests",
+    "ruff:fix:unsafe": "ruff check --fix --unsafe-fixes scripts tests",
+    "check:python": "npm run lint:python && npm run typecheck:python && npm run test:python && npm run compile:python",
+    "check:python:unsafe": "npm run lint:python:unsafe && npm run typecheck:python && npm run test:python && npm run compile:python",
+    "compile:python": "python -m compileall -q -x \"[\\\\/]\\.\" scripts tests",
+    "format:python": "npm run ruff:format && npm run ruff:fix",
+    "lint:python": "npm run ruff:check && npm run ruff:format:check",
+    "lint:python:unsafe": "npm run ruff:check:unsafe && npm run ruff:fix:unsafe",
+    "pyright": "pyright",
+    "python:bootstrap": "python -m pip install -r requirements-dev.txt",
+    "python:venv": "python -m venv .venv && .venv\\Scripts\\activate && python -m pip install --upgrade pip && python -m pip install -r requirements-dev.txt",
+    "python:venv:activate": ". .\\.venv\\Scripts\\Activate.ps1",
+    "python:venv:deactivate": ". .\\.venv\\Scripts\\Deactivate.ps1",
+    "ruff:check": "ruff check scripts tests",
+    "ruff:fix": "ruff check --fix scripts tests",
+    "ruff:format": "ruff format scripts tests",
+    "ruff:format:check": "ruff format --check scripts tests",
+    "test:python": "pytest",
+    "typecheck:python": "mypy && pyright",
+    "skillcheck": "skillcheck --history SKILL.md --fail-on-regression"
+  },
+  "codexSkill": {
+    "name": "codecov-management",
+    "path": ".",
+    "githubReleaseAssetPrefix": "codecov-skill"
+  }
+}
