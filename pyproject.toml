@@ -309,7 +309,7 @@
         "--cov-report=term-missing:skip-covered",
         "--cov-report=xml:coverage/python.xml",
         "--cov-fail-under=75",
-        "--basetemp=.cache/pytest_tmp"
+        "--basetemp=.pytest_tmp"
     ]
     filterwarnings             = [ "error" ]
     junit_duration_report      = "call"
