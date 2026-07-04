@@ -71,18 +71,18 @@
             strict = true
 
         [tool.ruff.lint.per-file-ignores]
-            "scripts/**/*.py" = [
+            "skills/codecov-management/scripts/**/*.py" = [
                 "D100",          # Bundled CLI helper modules are documented by SKILL.md and command help.
                 "D101",          # Small payload dataclasses are self-describing.
                 "D103"           # Internal command helpers are not a public Python API.
             ]
-            "scripts/manage_codecov.py" = [
+            "skills/codecov-management/scripts/manage_codecov.py" = [
                 "PLR0915"        # The argparse command table is intentionally centralized.
             ]
-            "scripts/codecov_manage_project.py" = [
+            "skills/codecov-management/scripts/codecov_manage_project.py" = [
                 "PLR0913"        # Codecov endpoint wrappers keep CLI/API fields explicit.
             ]
-            "scripts/codecov_manage_render.py" = [
+            "skills/codecov-management/scripts/codecov_manage_render.py" = [
                 "PLR0913"        # Text rendering section options are clearer as named parameters.
             ]
             "tests/**/*.py" = [
@@ -108,7 +108,7 @@
     linecount_report         = "coverage/mypy/linecount.txt"
     lineprecision_report     = "coverage/mypy/lineprecision.txt"
     fixed_format_cache       = true
-    mypy_path                = ".;scripts"
+    mypy_path                = ".;skills/codecov-management/scripts"
     exclude                  = '''(?x)(
         (^|/)\.bzr/
         | (^|/)\.cache/
@@ -174,7 +174,7 @@
 
 [tool.pyright]
     include                             = [ "." ]
-    extraPaths                          = [ ".", "scripts" ]
+    extraPaths                          = [ ".", "skills/codecov-management/scripts" ]
     exclude                             = [
         "**/.*",
         "**/.bzr",
@@ -300,11 +300,13 @@
 
 [tool.pytest.ini_options]
     addopts                    = [
+        "-p",
+        "no:xonsh",
         "--strict-config",
         "--strict-markers",
         "--import-mode=importlib",
         "--junitxml=test-report.junit.xml",
-        "--cov=scripts",
+        "--cov=skills/codecov-management/scripts",
         "--cov-branch",
         "--cov-report=term-missing:skip-covered",
         "--cov-report=xml:coverage/python.xml",
@@ -319,7 +321,7 @@
     junit_logging              = "log"
     junit_log_passing_tests    = true
     junit_suite_name           = "python-junit"
-    pythonpath                 = [ ".", "scripts" ]
+    pythonpath                 = [ ".", "skills/codecov-management/scripts" ]
     cache_dir                  = ".cache/pytest_cache"
     testpaths                  = [ "." ]
     norecursedirs              = [
@@ -347,7 +349,7 @@
 [tool.coverage.run]
     branch         = true
     relative_files = true
-    source         = [ "scripts" ]
+    source         = [ "skills/codecov-management/scripts" ]
 
 [tool.coverage.report]
     fail_under   = 75

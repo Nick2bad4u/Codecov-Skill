@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "skill_path": "SKILL.md",
+  "skill_path": "skills/codecov-management/SKILL.md",
   "runs": [
     {
       "timestamp_utc": "2026-06-29T05:36:59Z",

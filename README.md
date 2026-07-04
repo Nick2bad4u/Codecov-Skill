@@ -6,7 +6,7 @@ An open-agent skill for inspecting and managing **Codecov** coverage, API data, 
 
 This repository provides:
 
-- a reusable `codecov-management` skill (`SKILL.md`)
+- a reusable `codecov-management` skill (`skills/codecov-management/SKILL.md`)
 - a Python CLI helper to inspect Codecov repositories and validate setup
 - GitHub automation for CI, Codecov uploads, and release packaging
 
@@ -30,21 +30,24 @@ With a Codecov token in an environment variable, you can:
 ## Repository layout
 
 ```text
-SKILL.md
-agents/
-  openai.yaml
-assets/
-  codecov-management-small.svg
-  codecov-management.svg
-references/
-  command-guide.md
-  codecov-setup.md
-scripts/
-  manage_codecov.py
-  codecov_manage_api.py
-  codecov_manage_common.py
-  codecov_manage_project.py
-  codecov_manage_render.py
+skills/
+  codecov-management/
+    SKILL.md
+    LICENSE.txt
+    agents/
+      openai.yaml
+    assets/
+      codecov-management-small.svg
+      codecov-management.svg
+    references/
+      command-guide.md
+      codecov-setup.md
+    scripts/
+      manage_codecov.py
+      codecov_manage_api.py
+      codecov_manage_common.py
+      codecov_manage_project.py
+      codecov_manage_render.py
 README.md
 CONTRIBUTING.md
 SECURITY.md
@@ -55,7 +58,7 @@ CHANGELOG.md
 
 ## Agent compatibility
 
-This is a root `SKILL.md` package. `npx skills` can install it directly from GitHub, and `npx skills experimental_sync` can discover it from `node_modules` because the npm package ships `SKILL.md` at the package root.
+This package uses the shared skills layout: `skills/codecov-management/SKILL.md` with its bundled `agents/`, `assets/`, `references/`, and `scripts/` directories underneath the skill folder. That shape lets `npx skills` pull the complete payload instead of discovering only a root `SKILL.md`.
 
 Use `--agent universal` for agents that consume the shared `.agents/skills` layout. Use `--agent "*"` only when you intentionally want to install to every supported agent directory.
 
@@ -66,7 +69,7 @@ npm install --save-dev codecov-management-skill
 npx skills experimental_sync --agent universal -y
 ```
 
-OpenAI-specific display metadata lives in `agents/openai.yaml`. The portable skill contract is `SKILL.md` plus the referenced `assets/`, `references/`, and `scripts/` files.
+OpenAI-specific display metadata lives in `skills/codecov-management/agents/openai.yaml`. The portable skill contract is `skills/codecov-management/SKILL.md` plus the referenced `assets/`, `references/`, and `scripts/` files in that same skill folder.
 
 ---
 
@@ -111,17 +114,17 @@ export CODECOV_TOKEN="<your-token>"
 From repository root:
 
 ```powershell
-python "scripts/manage_codecov.py" summary --repo "." --json
+python "skills/codecov-management/scripts/manage_codecov.py" summary --repo "." --json
 ```
 
 Public repository read attempt without a token:
 
 ```powershell
-python "scripts/manage_codecov.py" repo --repo "." --allow-unauthenticated --json
+python "skills/codecov-management/scripts/manage_codecov.py" repo --repo "." --allow-unauthenticated --json
 ```
 
 Validate local Codecov configuration:
 
 ```powershell
-python "scripts/manage_codecov.py" validate-config --repo "." --json
+python "skills/codecov-management/scripts/manage_codecov.py" validate-config --repo "." --json
 ```

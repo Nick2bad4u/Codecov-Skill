@@ -83,21 +83,32 @@ assert(
   pkg.repository?.url === "git+https://github.com/Nick2bad4u/Codecov-Skill.git",
   "repository.url must exactly match the GitHub repository for npm trusted publishing",
 );
-assert(skill.path === ".", "codexSkill.path must point at the repository root");
+assert(skill.path === `skills/${skill.name}`, "codexSkill.path must point at skills/<skill-name>");
 for (const requiredFile of [
-  "SKILL.md",
-  "LICENSE.txt",
-  "agents/",
-  "assets/",
-  "references/",
-  "scripts/*.py",
+  `${skill.path}/SKILL.md`,
+  `${skill.path}/LICENSE.txt`,
+  `${skill.path}/agents/`,
+  `${skill.path}/assets/`,
+  `${skill.path}/references/`,
+  `${skill.path}/scripts/*.py`,
   "README.md",
   "CHANGELOG.md",
   "SECURITY.md",
 ]) {
   assert(pkg.files?.includes(requiredFile), `package files must include ${requiredFile}`);
 }
-for (const forbiddenFile of [".github/skills/", ".github/instructions/", "dist/", "tools/"]) {
+for (const forbiddenFile of [
+  ".github/skills/",
+  ".github/instructions/",
+  "dist/",
+  "tools/",
+  "SKILL.md",
+  "agents/",
+  "assets/",
+  "references/",
+  "scripts/",
+  "scripts/*.py",
+]) {
   assert(!pkg.files?.some((entry) => entry.startsWith(forbiddenFile)), `package files must not include ${forbiddenFile}`);
 }
 

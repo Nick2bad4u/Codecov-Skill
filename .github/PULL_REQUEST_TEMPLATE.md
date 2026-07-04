@@ -19,8 +19,8 @@
 <!-- Include commands and outcomes. -->
 
 ```text
-python -m compileall scripts
-python scripts/manage_codecov.py --help
+python -m compileall skills/codecov-management/scripts
+python skills/codecov-management/scripts/manage_codecov.py --help
 ```
 
 ## Security / safety checklist

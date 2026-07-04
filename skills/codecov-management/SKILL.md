@@ -99,7 +99,7 @@ python "<path-to-skill>/scripts/manage_codecov.py" api-call --repo "." --method 
 When editing this skill package, run:
 
 ```powershell
-python -m compileall scripts
+python -m compileall "<path-to-skill>/scripts"
 npm run release:verify
 ```
 

@@ -6,14 +6,14 @@ applyTo: "**"
 
 # Codecov Skill Guidance
 
-This repository packages the `codecov-management` Codex/open-agent skill. Keep changes focused on the root skill payload and the small repository automation needed to publish it.
+This repository packages the `codecov-management` Codex/open-agent skill. Keep changes focused on the skill payload and the small repository automation needed to publish it.
 
 ## Scope
 
-- Treat `SKILL.md` as the user-facing skill entrypoint.
-- Treat `scripts/manage_codecov.py` as the CLI entrypoint.
-- Keep helper modules in `scripts/` stdlib-only unless a dependency is explicitly justified and documented.
-- Keep `agents/openai.yaml`, `assets/`, `references/`, and `LICENSE.txt` synchronized with the packaged skill.
+- Treat `skills/codecov-management/SKILL.md` as the user-facing skill entrypoint.
+- Treat `skills/codecov-management/scripts/manage_codecov.py` as the CLI entrypoint.
+- Keep helper modules in `skills/codecov-management/scripts/` stdlib-only unless a dependency is explicitly justified and documented.
+- Keep `skills/codecov-management/agents/openai.yaml`, `assets/`, `references/`, and `LICENSE.txt` synchronized with the packaged skill.
 
 ## Security
 
@@ -27,7 +27,7 @@ This repository packages the `codecov-management` Codex/open-agent skill. Keep c
 Run the narrowest useful checks after edits:
 
 ```powershell
-python -m compileall scripts
+python -m compileall skills/codecov-management/scripts
 npm run release:verify
 ```
 
