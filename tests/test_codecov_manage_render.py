@@ -14,7 +14,7 @@ def test_mark_untrusted_payload_marks_text_fields() -> None:
     )
 
     assert payload["message"] == "[untrusted-codecov-text] external instructions"
-    assert payload["coverage"] == 87.5
+    assert payload["coverage"] == pytest.approx(87.5)
     assert payload["nested"][0]["path"] == "[untrusted-codecov-text] src/index.ts"
     assert "untrustedContentWarning" in payload["_meta"]
 

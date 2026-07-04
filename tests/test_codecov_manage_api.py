@@ -21,6 +21,17 @@ def test_absolute_endpoint_must_match_base_url_origin() -> None:
         )
 
 
+def test_absolute_endpoint_must_use_https() -> None:
+    insecure_endpoint = "http" + "://api.codecov.io/api/v2/github/owner/repos/repo/"
+
+    with pytest.raises(CodecovCliError, match="HTTPS"):
+        _ = codecov_manage_api.build_url(
+            "https://api.codecov.io",
+            insecure_endpoint,
+            None,
+        )
+
+
 def test_relative_endpoint_uses_configured_base_url() -> None:
     assert (
         codecov_manage_api.build_url(

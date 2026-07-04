@@ -110,8 +110,8 @@ def sanitize_base_url(value: str | None) -> str:
         return DEFAULT_BASE_URL
 
     parsed = parse.urlsplit(base_url)
-    if parsed.scheme not in {"https", "http"} or not parsed.netloc:
-        raise CodecovCliError(f"Codecov base URL must be an absolute http(s) URL: {base_url}")
+    if parsed.scheme != "https" or not parsed.netloc:
+        raise CodecovCliError(f"Codecov base URL must be an absolute HTTPS URL: {base_url}")
 
     return base_url.rstrip("/")
 
@@ -286,7 +286,7 @@ def api_request(*, context: CodecovContext, spec: RequestSpec) -> Any:
 
 
 def build_url(base_url: str, endpoint: str, query: dict[str, str] | None) -> str:
-    if endpoint.startswith(("https://", "http://")):
+    if parse.urlsplit(endpoint).scheme:
         url = validate_absolute_endpoint(base_url, endpoint)
     else:
         if not endpoint.startswith("/"):
@@ -304,8 +304,8 @@ def validate_absolute_endpoint(base_url: str, endpoint: str) -> str:
     base_parts = parse.urlsplit(base_url)
     endpoint_parts = parse.urlsplit(endpoint)
 
-    if endpoint_parts.scheme not in {"https", "http"} or not endpoint_parts.netloc:
-        raise CodecovCliError(f"Absolute endpoint must be an http(s) URL: {endpoint}")
+    if endpoint_parts.scheme != "https" or not endpoint_parts.netloc:
+        raise CodecovCliError(f"Absolute endpoint must be an HTTPS URL: {endpoint}")
 
     if (
         endpoint_parts.scheme.lower(),
