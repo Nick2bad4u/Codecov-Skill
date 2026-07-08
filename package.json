@@ -73,7 +73,13 @@
     "typecheck:python": "mypy && pyright",
     "skillcheck": "skillcheck --history skills/codecov-management/SKILL.md --fail-on-regression",
     "lint:remark": "remark . --frail --ignore-path .remarkignore",
-    "lint:remark:fix": "remark . --ignore-path .remarkignore --output"
+    "lint:remark:fix": "remark . --ignore-path .remarkignore --output",
+    "lint:jscpd": "jscpd --config node_modules/jscpd-config-nick2bad4u/jscpd.json",
+    "changelog:generate": "git cliff --config node_modules/gitcliff-config-nick2bad4u/cliff.toml --github-repo Nick2bad4u/Codecov-Skill --output CHANGELOG.md",
+    "changelog:preview": "git cliff --config node_modules/gitcliff-config-nick2bad4u/cliff.toml --github-repo Nick2bad4u/Codecov-Skill --unreleased",
+    "changelog:release-notes": "git cliff --config node_modules/gitcliff-config-nick2bad4u/cliff.toml --github-repo Nick2bad4u/Codecov-Skill --current",
+    "lint:lychee": "lychee --config node_modules/lychee-config-nick2bad4u/lychee.toml .",
+    "lint:lychee:smoke": "lychee --config node_modules/lychee-config-nick2bad4u/lychee.toml --dump-inputs README.md"
   },
   "codexSkill": {
     "name": "codecov-management",
@@ -81,6 +87,11 @@
     "githubReleaseAssetPrefix": "codecov-skill"
   },
   "devDependencies": {
+    "git-cliff": "^2.13.1",
+    "gitcliff-config-nick2bad4u": "^1.1.0",
+    "jscpd": "^5.0.12",
+    "jscpd-config-nick2bad4u": "^1.0.0",
+    "lychee-config-nick2bad4u": "^1.0.0",
     "remark": "^15.0.1",
     "remark-cli": "^12.0.1",
     "remark-config-nick2bad4u": "^1.1.2"
