@@ -32,26 +32,26 @@ Use separate upload steps for coverage and test results when both are sent to Co
 - name: Upload coverage to Codecov
   uses: codecov/codecov-action@v7
   with:
-    use_oidc: true
-    files: coverage/python.xml
-    flags: python
-    name: pytest-coverage-python
-    report_type: coverage
-    fail_ci_if_error: true
-    disable_search: true
-    verbose: true
+   use_oidc: true
+   files: coverage/python.xml
+   flags: python
+   name: pytest-coverage-python
+   report_type: coverage
+   fail_ci_if_error: true
+   disable_search: true
+   verbose: true
 
 - name: Upload test results to Codecov
   uses: codecov/codecov-action@v7
   with:
-    use_oidc: true
-    files: test-report.junit.xml
-    flags: python
-    name: pytest-junit-python
-    report_type: test_results
-    fail_ci_if_error: true
-    disable_search: true
-    verbose: true
+   use_oidc: true
+   files: test-report.junit.xml
+   flags: python
+   name: pytest-junit-python
+   report_type: test_results
+   fail_ci_if_error: true
+   disable_search: true
+   verbose: true
 ```
 
 Pin third-party actions according to the repository's workflow policy. In this user's repos, workflow actions are commonly pinned to full SHAs with comments naming the resolved version.

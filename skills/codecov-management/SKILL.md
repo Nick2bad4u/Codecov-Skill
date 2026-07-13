@@ -3,7 +3,7 @@ name: "codecov-management"
 description: "Inspect and manage Codecov coverage, API calls, repository or flag checks, pull coverage, codecov.yml setup, GitHub Action uploads, statuses, and safe troubleshooting with environment-variable tokens."
 license: "Unlicense"
 metadata:
-  short-description: "Inspect and manage Codecov coverage"
+ short-description: "Inspect and manage Codecov coverage"
 ---
 
 # Codecov Management

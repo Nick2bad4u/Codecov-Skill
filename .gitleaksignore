@@ -1,0 +1,6 @@
+566f8fd:SECURITY.md:nick2bad4u-sensitive-env-vars:34
+566f8fd:tests/test_manage_codecov.py:nick2bad4u-sensitive-env-vars:20
+566f8fd:SKILL.md:nick2bad4u-sensitive-env-vars:31
+566f8fd:tests/test_codecov_manage_api.py:nick2bad4u-sensitive-env-vars:133
+566f8fd:tests/test_codecov_manage_project.py:nick2bad4u-sensitive-env-vars:20
+566f8fd:scripts/codecov_manage_api.py:nick2bad4u-sensitive-env-vars:20

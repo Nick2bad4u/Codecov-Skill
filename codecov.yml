@@ -1,22 +1,22 @@
 codecov:
-  max_report_age: "off"
+    max_report_age: "off"
 
 coverage:
-  precision: 2
-  range: 75...100
-  round: down
-  status:
-    project:
-      default:
-        flags:
-          - python
-        target: 75%
-        threshold: 0%
-    patch:
-      default:
-        flags:
-          - python
-        target: 75%
-        threshold: 0%
-  ignore:
-    - tests/**
+    precision: 2
+    range: "75...100"
+    round: "down"
+    status:
+        project:
+            default:
+                flags:
+                    - "python"
+                target: "75%"
+                threshold: "0%"
+        patch:
+            default:
+                flags:
+                    - "python"
+                target: "75%"
+                threshold: "0%"
+    ignore:
+        - "tests/**"

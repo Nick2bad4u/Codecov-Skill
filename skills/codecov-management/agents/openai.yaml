@@ -1,7 +1,7 @@
 interface:
-  display_name: "Codecov Management"
-  short_description: "Inspect and manage Codecov coverage"
-  icon_small: "./assets/codecov-management-small.svg"
-  icon_large: "./assets/codecov-management.svg"
-  brand_color: "#F01F7A"
-  default_prompt: "Use $codecov-management to inspect Codecov coverage, validate configuration, and plan safe coverage or upload changes."
+    display_name: "Codecov Management"
+    short_description: "Inspect and manage Codecov coverage"
+    icon_small: "./assets/codecov-management-small.svg"
+    icon_large: "./assets/codecov-management.svg"
+    brand_color: "#F01F7A"
+    default_prompt: "Use $codecov-management to inspect Codecov coverage, validate configuration, and plan safe coverage or upload changes."
