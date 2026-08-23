@@ -306,7 +306,7 @@
         "--strict-markers",
         "--import-mode=importlib",
         "--junitxml=test-report.junit.xml",
-        "--cov=skills/codecov-management/scripts",
+        "--cov",
         "--cov-branch",
         "--cov-report=term-missing:skip-covered",
         "--cov-report=xml:coverage/python.xml",
@@ -348,8 +348,8 @@
 
 [tool.coverage.run]
     branch         = true
+    include        = [ "skills/codecov-management/scripts/*.py" ]
     relative_files = true
-    source         = [ "skills/codecov-management/scripts" ]
 
 [tool.coverage.report]
     fail_under   = 75

@@ -58,6 +58,7 @@ def test_more_repo_api_wrappers_build_expected_endpoints(tmp_path: Path, monkeyp
     codecov_manage_project.fetch_repo(context=context)
     codecov_manage_project.fetch_branch(context=context, branch="main")
     codecov_manage_project.fetch_commit(context=context, commit="abc123")
+    codecov_manage_project.fetch_commit_uploads(context=context, commit="abc123", page_size=4)
     codecov_manage_project.fetch_commit_report(context=context, commit="abc123")
     codecov_manage_project.fetch_report_tree(context=context, commit="abc123", path=None)
     codecov_manage_project.fetch_flags(context=context)
@@ -69,6 +70,11 @@ def test_more_repo_api_wrappers_build_expected_endpoints(tmp_path: Path, monkeyp
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/", None),
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/branches/main/", None),
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/commits/abc123/", None),
+        (
+            "GET",
+            "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/commits/abc123/uploads/",
+            {"page_size": "4"},
+        ),
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/commits/abc123/report/", None),
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/commits/abc123/report/tree/", None),
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/flags/", None),
@@ -76,6 +82,33 @@ def test_more_repo_api_wrappers_build_expected_endpoints(tmp_path: Path, monkeyp
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/pulls/42/", None),
         ("GET", "/api/v2/github/Nick2bad4u/repos/Codecov-Skill/compare/base...head/", None),
     ]
+
+
+def test_commit_upload_errors_builds_read_only_graphql_query(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_api_request(*, context: CodecovContext, spec: Any) -> dict[str, object]:
+        del context
+        captured["spec"] = spec
+        return {"data": {}}
+
+    monkeypatch.setattr(codecov_manage_project, "api_request", fake_api_request)
+
+    payload = codecov_manage_project.fetch_commit_upload_errors(context=make_context(tmp_path), commit="abc123")
+    spec = captured["spec"]
+
+    assert payload == {"data": {}}
+    assert spec.method == "POST"
+    assert spec.endpoint == "/graphql/github"
+    assert spec.json_body["variables"] == {
+        "owner": "Nick2bad4u",
+        "repo": "Codecov-Skill",
+        "commitid": "abc123",
+    }
+    assert "errors" in spec.json_body["query"]
 
 
 def test_build_summary_combines_api_results(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

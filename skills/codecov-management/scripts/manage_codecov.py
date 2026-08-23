@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 
 from codecov_manage_api import DEFAULT_BASE_URL, DEFAULT_SERVICE, resolve_context
 from codecov_manage_common import CodecovCliError, parse_name_value_pairs, require_positive_integer
+from codecov_manage_coverage import inspect_coverage_report
 from codecov_manage_project import (
     DEFAULT_PAGE_SIZE,
     build_config_template,
@@ -22,6 +23,8 @@ from codecov_manage_project import (
     fetch_branches,
     fetch_commit,
     fetch_commit_report,
+    fetch_commit_upload_errors,
+    fetch_commit_uploads,
     fetch_commits,
     fetch_file_report,
     fetch_flags,
@@ -40,6 +43,7 @@ if TYPE_CHECKING:
 
 HELP_COMMIT = "Commit SHA or Codecov commit id."
 HELP_PAGE_SIZE = "Maximum number of results to request."
+LOCAL_COMMANDS = frozenset({"github-action-snippet", "inspect-coverage-report", "print-config", "validate-config"})
 
 
 def parse_args() -> argparse.Namespace:
@@ -64,7 +68,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--allow-unauthenticated",
         action="store_true",
-        help="Allow API requests without a Codecov token for public endpoints.",
+        help="Force API requests to omit the Codecov token for public endpoints.",
     )
     parser.add_argument("--json", action="store_true", help="Emit JSON instead of text output.")
 
@@ -89,6 +93,16 @@ def parse_args() -> argparse.Namespace:
     commit_parser = subparsers.add_parser("commit", help="Fetch one commit.")
     commit_parser.add_argument("--commit", required=True, help=HELP_COMMIT)
 
+    commit_uploads_parser = subparsers.add_parser("commit-uploads", help="List provider uploads for one commit.")
+    commit_uploads_parser.add_argument("--commit", required=True, help=HELP_COMMIT)
+    add_page_size_arg(commit_uploads_parser)
+
+    commit_upload_errors_parser = subparsers.add_parser(
+        "commit-upload-errors",
+        help="Fetch per-upload processing errors through Codecov's read-only web GraphQL query.",
+    )
+    commit_upload_errors_parser.add_argument("--commit", required=True, help=HELP_COMMIT)
+
     commit_report_parser = subparsers.add_parser("commit-report", help="Fetch report totals for one commit.")
     commit_report_parser.add_argument("--commit", required=True, help=HELP_COMMIT)
 
@@ -99,6 +113,16 @@ def parse_args() -> argparse.Namespace:
     file_report_parser = subparsers.add_parser("file-report", help="Fetch coverage details for one file in a commit.")
     file_report_parser.add_argument("--commit", required=True, help=HELP_COMMIT)
     file_report_parser.add_argument("--path", required=True, help="File path in the Codecov report.")
+
+    inspect_report_parser = subparsers.add_parser(
+        "inspect-coverage-report",
+        help="Inspect a local Cobertura XML report for timestamp and repository path problems.",
+    )
+    inspect_report_parser.add_argument(
+        "--report",
+        default="coverage.xml",
+        help="Cobertura XML path inside the target repository.",
+    )
 
     subparsers.add_parser("flags", help="List repository flags.")
 
@@ -205,7 +229,7 @@ def normalize_global_args(argv: list[str]) -> list[str]:
 def main() -> int:
     try:
         args = parse_args()
-        context = resolve_context(args)
+        context = resolve_context(args, require_token=args.command not in LOCAL_COMMANDS)
         payload = dispatch_command(args, context)
         emit_output(payload, as_json=args.json)
     except CodecovCliError as error_message:
@@ -233,9 +257,19 @@ def dispatch_command(args: argparse.Namespace, context: CodecovContext) -> Any:
             page_size=require_positive_integer(args.page_size, argument_name="page-size"),
         ),
         "commit": lambda: fetch_commit(context=context, commit=args.commit),
+        "commit-uploads": lambda: fetch_commit_uploads(
+            context=context,
+            commit=args.commit,
+            page_size=require_positive_integer(args.page_size, argument_name="page-size"),
+        ),
+        "commit-upload-errors": lambda: fetch_commit_upload_errors(context=context, commit=args.commit),
         "commit-report": lambda: fetch_commit_report(context=context, commit=args.commit),
         "report-tree": lambda: fetch_report_tree(context=context, commit=args.commit, path=args.path),
         "file-report": lambda: fetch_file_report(context=context, commit=args.commit, path=args.path),
+        "inspect-coverage-report": lambda: inspect_coverage_report(
+            context=context,
+            report_path=Path(args.report),
+        ),
         "flags": lambda: fetch_flags(context=context),
         "pulls": lambda: fetch_pulls(
             context=context,
