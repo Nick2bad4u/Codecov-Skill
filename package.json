@@ -84,11 +84,12 @@
         "ruff:format:check": "ruff format --check skills/codecov-management/scripts tests",
         "skillcheck": "skillcheck --history skills/codecov-management/SKILL.md --fail-on-regression",
         "test": "npm run test:python",
-        "test:python": "pytest",
+        "test:python": "pytest && npm run validate:coverage-report",
         "typecheck:python": "mypy && pyright",
         "update-actions": "npx actions-up --yes --style sha",
         "update-deps": "npx ncu --configFileName .ncurc.json --configFilePath node_modules/ncu-config-nick2bad4u && npm update --force && npm install --force",
-        "validate": "node tools/validate-skill-package.mjs"
+        "validate": "node tools/validate-skill-package.mjs",
+        "validate:coverage-report": "python skills/codecov-management/scripts/manage_codecov.py inspect-coverage-report --repo . --report coverage/python.xml --json"
     },
     "devDependencies": {
         "@microsoft/tsdoc-config": "^0.18.1",

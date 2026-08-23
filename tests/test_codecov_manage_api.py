@@ -74,6 +74,29 @@ def test_resolve_repo_root_and_origin_remote_without_subprocess(tmp_path: Path) 
     )
 
 
+def test_resolve_origin_remote_from_linked_worktree_common_config(tmp_path: Path) -> None:
+    repo_root = tmp_path / "linked-worktree"
+    common_git_dir = tmp_path / "main" / ".git"
+    worktree_git_dir = common_git_dir / "worktrees" / "linked-worktree"
+    repo_root.mkdir()
+    worktree_git_dir.mkdir(parents=True)
+    _ = (repo_root / ".git").write_text(f"gitdir: {worktree_git_dir}\n", encoding="utf8")
+    _ = (worktree_git_dir / "commondir").write_text("../..\n", encoding="utf8")
+    _ = (common_git_dir / "config").write_text(
+        """
+        [remote "origin"]
+            url = https://github.com/Nick2bad4u/Codecov-Skill.git
+        """,
+        encoding="utf8",
+    )
+
+    assert codecov_manage_api.resolve_remote_slug(repo_root) == codecov_manage_api.RemoteSlug(
+        service="github",
+        owner="Nick2bad4u",
+        repo_name="Codecov-Skill",
+    )
+
+
 def test_resolve_context_uses_remote_and_token_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     git_dir = tmp_path / ".git"
     git_dir.mkdir()
@@ -110,6 +133,67 @@ def test_resolve_token_can_allow_unauthenticated(monkeypatch: pytest.MonkeyPatch
 
     with pytest.raises(CodecovCliError, match="No Codecov token"):
         _ = codecov_manage_api.resolve_token(["CODECOV_TOKEN"], required=True)
+
+
+def test_resolve_context_can_skip_token_for_local_commands(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    git_dir = tmp_path / ".git"
+    git_dir.mkdir()
+    _ = (git_dir / "config").write_text(
+        """
+        [remote "origin"]
+            url = https://github.com/Nick2bad4u/Codecov-Skill.git
+        """,
+        encoding="utf8",
+    )
+    monkeypatch.delenv("CODECOV_TOKEN", raising=False)
+    monkeypatch.delenv("CODECOV_API_TOKEN", raising=False)
+
+    context = codecov_manage_api.resolve_context(
+        SimpleNamespace(
+            repo=str(tmp_path),
+            service=None,
+            owner=None,
+            repo_name=None,
+            base_url=None,
+            token_envs=None,
+            allow_unauthenticated=False,
+        ),
+        require_token=False,
+    )
+
+    assert context.token is None
+    assert context.token_env_name is None
+
+
+def test_resolve_context_forces_anonymous_access_when_requested(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    git_dir = tmp_path / ".git"
+    git_dir.mkdir()
+    _ = (git_dir / "config").write_text(
+        """
+        [remote "origin"]
+            url = https://github.com/Nick2bad4u/Codecov-Skill.git
+        """,
+        encoding="utf8",
+    )
+    monkeypatch.setenv("CODECOV_TOKEN", "stale-token")
+
+    context = codecov_manage_api.resolve_context(
+        SimpleNamespace(
+            repo=str(tmp_path),
+            service=None,
+            owner=None,
+            repo_name=None,
+            base_url=None,
+            token_envs=None,
+            allow_unauthenticated=True,
+        )
+    )
+
+    assert context.token is None
+    assert context.token_env_name is None
 
 
 def test_api_request_builds_bearer_json_request(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

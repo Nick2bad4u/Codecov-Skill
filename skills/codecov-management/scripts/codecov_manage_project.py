@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, cast
-from urllib import error, request
+from urllib import error, parse, request
 
 from codecov_manage_api import RequestSpec, api_request, repo_api_endpoint
 from codecov_manage_common import CodecovCliError
@@ -15,6 +15,33 @@ JsonObject = dict[str, Any]
 
 DEFAULT_PAGE_SIZE = 25
 VALIDATE_CONFIG_URL = "https://codecov.io/validate"
+COMMIT_UPLOAD_ERRORS_QUERY = """\
+query CommitUploadErrors($owner: String!, $repo: String!, $commitid: String!) {
+  owner(username: $owner) {
+    repository(name: $repo) {
+      ... on Repository {
+        commit(id: $commitid) {
+          uploads {
+            edges {
+              node {
+                state
+                name
+                errors {
+                  edges {
+                    node {
+                      errorCode
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
 
 
 def context_payload(context: CodecovContext) -> JsonObject:
@@ -83,6 +110,35 @@ def fetch_commit(*, context: CodecovContext, commit: str) -> Any:
     return api_request(
         context=context,
         spec=RequestSpec(method="GET", endpoint=repo_api_endpoint(context, f"commits/{commit}/")),
+    )
+
+
+def fetch_commit_uploads(*, context: CodecovContext, commit: str, page_size: int) -> Any:
+    return api_request(
+        context=context,
+        spec=RequestSpec(
+            method="GET",
+            endpoint=repo_api_endpoint(context, f"commits/{commit}/uploads/"),
+            query={"page_size": str(page_size)},
+        ),
+    )
+
+
+def fetch_commit_upload_errors(*, context: CodecovContext, commit: str) -> Any:
+    return api_request(
+        context=context,
+        spec=RequestSpec(
+            method="POST",
+            endpoint=f"/graphql/{parse.quote(context.service, safe='')}",
+            json_body={
+                "query": COMMIT_UPLOAD_ERRORS_QUERY,
+                "variables": {
+                    "owner": context.owner,
+                    "repo": context.repo_name,
+                    "commitid": commit,
+                },
+            },
+        ),
     )
 
 

@@ -46,6 +46,27 @@ def test_parse_args_builds_command_table_and_normalizes_global_args(monkeypatch:
     assert args.page_size == 10
 
 
+def test_parse_args_supports_local_coverage_report_inspection(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "manage_codecov.py",
+            "inspect-coverage-report",
+            "--report",
+            "coverage/python.xml",
+            "--repo",
+            ".",
+            "--json",
+        ],
+    )
+
+    args = manage_codecov.parse_args()
+
+    assert args.command == "inspect-coverage-report"
+    assert args.report == "coverage/python.xml"
+    assert args.json is True
+
+
 def test_normalize_global_args_requires_values() -> None:
     with pytest.raises(CodecovCliError, match="Missing value"):
         _ = manage_codecov.normalize_global_args(["summary", "--repo"])

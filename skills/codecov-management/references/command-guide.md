@@ -12,7 +12,7 @@ All authenticated examples assume a Codecov token is already available through `
 - `--repo-name`: repository name.
 - `--base-url`: Codecov API base URL, default `https://api.codecov.io`.
 - `--token-env`: token environment variable name. Repeat for fallbacks.
-- `--allow-unauthenticated`: permit requests without a token for public endpoints.
+- `--allow-unauthenticated`: force requests to omit configured tokens for public endpoints.
 - `--json`: emit machine-readable output.
 
 ## Inspection
@@ -24,6 +24,8 @@ python "<path-to-skill>/scripts/manage_codecov.py" branches --repo "." --page-si
 python "<path-to-skill>/scripts/manage_codecov.py" branch --repo "." --branch main --json
 python "<path-to-skill>/scripts/manage_codecov.py" commits --repo "." --branch main --page-size 25 --json
 python "<path-to-skill>/scripts/manage_codecov.py" commit --repo "." --commit <sha> --json
+python "<path-to-skill>/scripts/manage_codecov.py" commit-uploads --repo "." --commit <sha> --page-size 25 --json
+python "<path-to-skill>/scripts/manage_codecov.py" commit-upload-errors --repo "." --commit <sha> --json
 python "<path-to-skill>/scripts/manage_codecov.py" commit-report --repo "." --commit <sha> --json
 python "<path-to-skill>/scripts/manage_codecov.py" report-tree --repo "." --commit <sha> --path src --json
 python "<path-to-skill>/scripts/manage_codecov.py" file-report --repo "." --commit <sha> --path src/index.ts --json
@@ -34,6 +36,18 @@ python "<path-to-skill>/scripts/manage_codecov.py" compare --repo "." --base <ba
 ```
 
 Use `--allow-unauthenticated` only when the target repository is public and Codecov allows that endpoint without a token.
+
+`commit-uploads` uses Codecov's documented REST endpoint and is the primary way to distinguish an accepted upload request from a report that Codecov later merged, processed, or rejected. `commit-upload-errors` is a read-only fallback against the GraphQL surface used by Codecov's web application when REST does not expose the error code. That GraphQL schema is not documented as a stable public API; treat the command as best effort and verify the current web schema if it stops working.
+
+## Local Coverage Report Inspection
+
+```powershell
+python "<path-to-skill>/scripts/manage_codecov.py" inspect-coverage-report --repo "." --report coverage/python.xml --json
+```
+
+This command does not call Codecov or require a token. It resolves the XML path inside the repository, rejects oversized or unsafe XML, identifies seconds versus milliseconds timestamps, applies Codecov's default 12-hour age check, and verifies that Cobertura `<class filename>` values resolve to repository files without absolute paths, parent traversal, or Windows separators.
+
+Read [python-coverage.md](python-coverage.md) before changing coverage.py, pytest-cov, Codecov path fixes, or `max_report_age` in response to an inspection failure.
 
 ## Configuration
 

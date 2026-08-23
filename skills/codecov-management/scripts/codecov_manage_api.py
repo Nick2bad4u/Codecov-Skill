@@ -51,7 +51,7 @@ class RemoteSlug:
     repo_name: str
 
 
-def resolve_context(args: Any) -> CodecovContext:
+def resolve_context(args: Any, *, require_token: bool | None = None) -> CodecovContext:
     repo_root = resolve_repo_root(Path(args.repo))
     remote_slug = resolve_remote_slug(repo_root)
 
@@ -66,10 +66,14 @@ def resolve_context(args: Any) -> CodecovContext:
             )
         )
 
-    token, token_env_name = resolve_token(
-        args.token_envs or list(DEFAULT_TOKEN_ENVS),
-        required=not args.allow_unauthenticated,
-    )
+    should_resolve_token = require_token is not False and not args.allow_unauthenticated
+    if should_resolve_token:
+        token, token_env_name = resolve_token(
+            args.token_envs or list(DEFAULT_TOKEN_ENVS),
+            required=True,
+        )
+    else:
+        token, token_env_name = None, None
 
     codecov_yml_path = find_codecov_yml(repo_root)
     return CodecovContext(
@@ -158,8 +162,8 @@ def read_origin_remote_url(repo_root: Path) -> str | None:
     if git_dir is None:
         return None
 
-    config_path = git_dir / "config"
-    if not config_path.is_file():
+    config_path = resolve_git_config_path(git_dir)
+    if config_path is None:
         return None
 
     current_remote: str | None = None
@@ -177,6 +181,24 @@ def read_origin_remote_url(repo_root: Path) -> str | None:
             return value.strip()
 
     return None
+
+
+def resolve_git_config_path(git_dir: Path) -> Path | None:
+    config_path = git_dir / "config"
+    if config_path.is_file():
+        return config_path
+
+    common_dir_entry = git_dir / "commondir"
+    if not common_dir_entry.is_file():
+        return None
+
+    common_dir_value = common_dir_entry.read_text(encoding="utf8").strip()
+    common_dir_path = Path(common_dir_value)
+    if not common_dir_path.is_absolute():
+        common_dir_path = (git_dir / common_dir_path).resolve()
+
+    common_config_path = common_dir_path / "config"
+    return common_config_path if common_config_path.is_file() else None
 
 
 def resolve_git_dir(repo_root: Path) -> Path | None:
